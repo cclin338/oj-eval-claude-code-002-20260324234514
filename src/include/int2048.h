@@ -19,7 +19,16 @@
 
 namespace sjtu {
 class int2048 {
-  // todo
+private:
+  bool sign;  // true for negative, false for positive or zero
+  std::vector<int> val;  // digits in base 10^9, little-endian order
+
+  // Helper function to remove leading zeros
+  void clean();
+
+  // Compare absolute values: returns -1 if |this| < |other|, 0 if equal, 1 if |this| > |other|
+  int abs_compare(const int2048 &other) const;
+
 public:
   // Constructors
   int2048();
