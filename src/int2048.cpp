@@ -92,9 +92,9 @@ void int2048::print() {
     }
     std::cout << val.back();
     for (int i = (int)val.size() - 2; i >= 0; --i) {
-        std::cout.width(BASE_DIGITS);
-        std::cout.fill('0');
-        std::cout << val[i];
+        char buf[10];
+        std::sprintf(buf, "%09d", val[i]);
+        std::cout << buf;
     }
 }
 
