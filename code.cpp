@@ -1,6 +1,6 @@
-#pragma once
-#ifndef SJTU_BIGINTEGER
-#define SJTU_BIGINTEGER
+
+
+
 
 // Integer 1:
 // Implement a signed big integer class that only needs to support simple addition and subtraction
@@ -93,8 +93,7 @@ public:
 };
 } // namespace sjtu
 
-#endif
-#include "int2048.h"
+
 
 #include <algorithm>
 #include <cmath>
