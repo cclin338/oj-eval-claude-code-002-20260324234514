@@ -8,8 +8,7 @@
 // Integer 2:
 // Implement a signed big integer class that supports addition, subtraction, multiplication, and division, and overload related operators
 
-// Do not use any header files other than following
-#include <algorithm>
+// Do not use any header files other than the following
 #include <complex>
 #include <cstdio>
 #include <cstring>
@@ -19,11 +18,6 @@
 // Do not use "using namespace std;"
 
 namespace sjtu {
-
-// Constants for digit compression
-const int BASE = 1000000000;  // 10^9
-const int BASE_DIGITS = 9;
-
 class int2048 {
 private:
   bool sign;  // true for negative, false for positive or zero
@@ -42,7 +36,7 @@ public:
   int2048(const std::string &);
   int2048(const int2048 &);
 
-  // The parameter types of following functions are for reference only, you can choose to use constant references or not
+  // The parameter types of the following functions are for reference only, you can choose to use constant references or not
   // If needed, you can add other required functions yourself
   // ===================================
   // Integer1
@@ -97,6 +91,19 @@ public:
   friend bool operator<=(const int2048 &, const int2048 &);
   friend bool operator>=(const int2048 &, const int2048 &);
 };
+} // namespace sjtu
+
+#endif
+#include "int2048.h"
+
+#include <algorithm>
+#include <cmath>
+
+namespace sjtu {
+
+// Constants for digit compression
+const int BASE = 1000000000;  // 10^9
+const int BASE_DIGITS = 9;
 
 // Helper function to remove leading zeros
 void int2048::clean() {
@@ -290,9 +297,34 @@ int2048 &int2048::minus(const int2048 &other) {
             }
             clean();
         } else {
-            // |this| < |other|, flip sign
+            // |this| < |other|, result has opposite sign
+            // Compute |other| - |this|
             int2048 temp = other;
-            temp.minus(*this);
+            // Temporarily make both positive for subtraction
+            bool temp_sign = temp.sign;
+            temp.sign = false;
+            int2048 this_abs = *this;
+            this_abs.sign = false;
+
+            // Subtract absolute values
+            int borrow = 0;
+            size_t max_len = std::max(temp.val.size(), this_abs.val.size());
+            temp.val.resize(max_len);
+
+            for (size_t i = 0; i < max_len; ++i) {
+                long long diff = temp.val[i] - (i < this_abs.val.size() ? this_abs.val[i] : 0) - borrow;
+                if (diff < 0) {
+                    diff += BASE;
+                    borrow = 1;
+                } else {
+                    borrow = 0;
+                }
+                temp.val[i] = diff;
+            }
+            temp.clean();
+
+            // Result has opposite sign of original
+            temp.sign = !temp_sign;
             *this = temp;
         }
     }
@@ -588,5 +620,3 @@ bool operator>=(const int2048 &a, const int2048 &b) {
 }
 
 } // namespace sjtu
-
-#endif

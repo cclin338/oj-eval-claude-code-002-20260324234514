@@ -201,9 +201,34 @@ int2048 &int2048::minus(const int2048 &other) {
             }
             clean();
         } else {
-            // |this| < |other|, flip sign
+            // |this| < |other|, result has opposite sign
+            // Compute |other| - |this|
             int2048 temp = other;
-            temp.minus(*this);
+            // Temporarily make both positive for subtraction
+            bool temp_sign = temp.sign;
+            temp.sign = false;
+            int2048 this_abs = *this;
+            this_abs.sign = false;
+
+            // Subtract absolute values
+            int borrow = 0;
+            size_t max_len = std::max(temp.val.size(), this_abs.val.size());
+            temp.val.resize(max_len);
+
+            for (size_t i = 0; i < max_len; ++i) {
+                long long diff = temp.val[i] - (i < this_abs.val.size() ? this_abs.val[i] : 0) - borrow;
+                if (diff < 0) {
+                    diff += BASE;
+                    borrow = 1;
+                } else {
+                    borrow = 0;
+                }
+                temp.val[i] = diff;
+            }
+            temp.clean();
+
+            // Result has opposite sign of original
+            temp.sign = !temp_sign;
             *this = temp;
         }
     }
